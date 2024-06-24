@@ -62,7 +62,19 @@ public class CategoriesController {
     @GetMapping("{categoryId}/products")
     public List<Product> getProductsById(@PathVariable int categoryId) {
         // get a list of product by categoryId
-        return null;
+        try
+        {
+            var product = productDao.listByCategoryId(categoryId);
+
+            if (product == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+            return product;
+        }
+        catch (Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
     }
 
     // add annotation to call this method for a POST action
