@@ -37,7 +37,7 @@ public class CategoriesController
     public List<Category> getAll()
     {
         // find and return all categories
-        return null;
+        return categoryDao.getAllCategories();
     }
 
     // add the appropriate annotation for a get action
@@ -81,7 +81,7 @@ public class CategoriesController
     // add annotation to call this method for a DELETE action - the url path must include the categoryId
     // add annotation to ensure that only an ADMIN can call this function
     @DeleteMapping("{id}")
-    @PreAuthorize("hasRol('ROLE_ADMIN'")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteCategory(@PathVariable int id)
     {
         // delete the category by id
