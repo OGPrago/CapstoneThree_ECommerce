@@ -2,9 +2,11 @@ package org.yearup.data.mysql;
 
 import org.springframework.stereotype.Component;
 import org.yearup.data.ShoppingCartDao;
+import org.yearup.data.UserDao;
 import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.ShoppingCartItem;
+import org.yearup.models.User;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -13,13 +15,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao {
-    public MySqlShoppingCartDao(DataSource dataSource) {
+public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao
+{
+    UserDao userDao;
+    public MySqlShoppingCartDao(DataSource dataSource, UserDao userDao) {
         super(dataSource);
+        this.userDao = userDao;
     }
 
     @Override
@@ -49,7 +53,11 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
     @Override
     public List<ShoppingCart> getCart(Principal principal) {
-        return null;
+        String userName = principal.getName();
+        User user = userDao.getByUserName(userName);
+        int userId = user.getId();
+
+        return (List<ShoppingCart>) getByUserId(userId);
     }
 
     @Override

@@ -3,10 +3,12 @@ package org.yearup.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProductDao;
+import org.yearup.data.ProfileDao;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
 import org.yearup.models.ShoppingCart;
@@ -26,9 +28,17 @@ public class ShoppingCartController
     private UserDao userDao;
     private ProductDao productDao;
 
+    public ShoppingCartController(ShoppingCartDao shoppingCartDao, UserDao userDao, ProductDao productDao)
+    {
+        this.shoppingCartDao = shoppingCartDao;
+        this.userDao = userDao;
+        this.productDao = productDao;
+    }
+
 
 
     // each method in this controller requires a Principal object as a parameter
+    @GetMapping
     public ShoppingCart getCart(Principal principal)
     {
         try
