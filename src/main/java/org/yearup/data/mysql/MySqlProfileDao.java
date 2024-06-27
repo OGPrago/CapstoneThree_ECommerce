@@ -75,6 +75,11 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         return null;
     }
 
+    @Override
+    public void update(int userId, Profile profile) {
+
+    }
+
     protected static Profile mapRow(ResultSet row) throws SQLException
     {
         int userId = row.getInt("user_id");
