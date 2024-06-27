@@ -18,6 +18,7 @@ import java.security.Principal;
 @RestController
 @PreAuthorize("isAuthenticated()")
 @RequestMapping("cart")
+@CrossOrigin
 public class ShoppingCartController
 {
     // a shopping cart requires

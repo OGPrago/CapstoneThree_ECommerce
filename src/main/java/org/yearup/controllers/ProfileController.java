@@ -2,10 +2,7 @@ package org.yearup.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProfileDao;
 import org.yearup.data.UserDao;
@@ -50,6 +47,20 @@ public class ProfileController
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found.");
 
             return profile;
+        }
+        catch (Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+    }
+
+    @PutMapping("")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+    public void updateProfile(@RequestBody Profile profile)
+    {
+        try
+        {
+            profileDao.update(profile);
         }
         catch (Exception ex)
         {
