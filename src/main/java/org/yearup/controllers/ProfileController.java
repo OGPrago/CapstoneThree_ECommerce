@@ -55,7 +55,6 @@ public class ProfileController
     }
 
     @PutMapping("")
-//    @PreAuthorize("hasRole('ROLE_USER')")
     public void updateProfile(@RequestBody Profile profile)
     {
         try

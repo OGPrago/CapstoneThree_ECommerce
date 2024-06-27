@@ -21,7 +21,9 @@ import java.util.List;
 public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao
 {
     UserDao userDao;
-    public MySqlShoppingCartDao(DataSource dataSource, UserDao userDao) {
+
+    public MySqlShoppingCartDao(DataSource dataSource, UserDao userDao)
+    {
         super(dataSource);
         this.userDao = userDao;
     }
@@ -33,18 +35,27 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
                 "JOIN products p ON sc.product_id = p.product_id WHERE sc.user_id = ?";
         ShoppingCart cart = new ShoppingCart();
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try (
+             Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+        )
+        {
             statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                ShoppingCartItem item = mapRow(resultSet);
-                cart.add(item);
+            try (
+                    ResultSet resultSet = statement.executeQuery();
+            )
+            {
+                while (resultSet.next())
+                {
+                    ShoppingCartItem item = mapRow(resultSet);
+                    cart.add(item);
+                }
+
             }
-
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new RuntimeException(e);
         }
 
@@ -52,7 +63,8 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    public List<ShoppingCart> getCart(Principal principal) {
+    public List<ShoppingCart> getCart(Principal principal)
+    {
         String userName = principal.getName();
         User user = userDao.getByUserName(userName);
         int userId = user.getId();
@@ -61,17 +73,42 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    public ShoppingCartDao addToCart(Product product) {
-        return null;
+    public void addToCart(Principal principal, Product product)
+    {
+        String sql = "INSERT INTO shopping_cart (user_id, product_id, quantity) VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+
+        String username = principal.getName();
+        User user = userDao.getByUserName(username);
+        int userId = user.getId();
+
+        try (
+             Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        )
+        {
+            ps.setInt(1, userId);
+            ps.setInt(2, product.getProductId());
+            ps.setInt(3, 1);
+
+            ps.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException("Database error: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    public void updateItemQuantity(int productId, Product product)
+    {
+
     }
 
     @Override
-    public void updateItemQuantity(int productId, Product product) {
-
-    }
-
-    @Override
-    public void deleteFromCart(int productId) {
+    public void deleteFromCart(int productId)
+    {
 
     }
 
@@ -98,5 +135,12 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         item.setDiscountPercent(discountPercent);
 
         return item;
+    }
+
+    private int getUserId(Principal principal)
+    {
+        String username = principal.getName();
+        User user = userDao.getByUserName(username);
+        return user.getId();
     }
 }
