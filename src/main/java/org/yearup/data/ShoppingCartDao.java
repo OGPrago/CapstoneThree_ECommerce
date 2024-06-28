@@ -12,6 +12,6 @@ public interface ShoppingCartDao
     // add additional method signatures here
     List<ShoppingCart> getCart(Principal principal);
     void addToCart(Principal principal, Product product);
-    void updateItemQuantity(int productId, Product product);
-    void deleteFromCart(int productId);
+    void updateItemQuantity(Principal principal, int productId, int quantity);
+    void clearCart(int userId);
 }

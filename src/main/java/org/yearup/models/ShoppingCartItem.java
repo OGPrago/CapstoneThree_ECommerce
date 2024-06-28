@@ -1,6 +1,7 @@
 package org.yearup.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
